@@ -1,0 +1,73 @@
+.image-logo {
+  max-width: 50px;
+  max-height: 50px;
+}
+
+.image-icon {
+  max-width: 20px;
+  max-height: 20px;
+  color: #fbfbfb26;
+}
+
+.image-icon-cart {
+  max-width: 40px;
+  max-height: 40px;
+}
+
+.image-icon-qty {
+  font-size: 20px;
+  margin: 2px;
+  color: #2c2c2c;
+}
+
+.image-icon-trash {
+  font-size: 20px;
+  margin: 2px;
+  color: #ec3c3c;
+}
+
+.image-product {
+  max-width: 150px;
+  max-height: 150px;
+}
+
+.image-product-details {
+  max-width: 300px;
+  max-height: 300px;
+  margin-bottom: 100px;
+}
+
+.image-empty-cart {
+  max-width: 300px;
+  max-height: 300px;
+  margin-bottom: 50px;
+}
+
+.button-shop {
+  margin: 0;
+  width: 100%;
+  padding: 10px 20px;
+  font-weight: bold;
+}
+
+.scroll-section {
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.grid-wrap {
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.link-text {
+  color: black;
+  font-weight: semi-bold;
+  text-decoration-line: none;
+}
+
+.footcomp {
+  background-color: black;
+  height: 100px;
+}
