@@ -54,6 +54,28 @@ app.put('/orders/:id', (req, res) => {
     });
 });
 
+
+//reservations
+app.post('/reservations', (req, res) => {
+    const { CustomerName, Date, Time, TableID } = req.body;
+    console.log('CustomerName:', CustomerName);
+    console.log('Date:', Date);
+    console.log('Time:', Time);
+    console.log('TableID:', TableID);
+
+    const query = 'INSERT INTO Reservation (CustomerName, Date, Time, TableID) VALUES (?, ?, ?, ?)';
+
+    db.query(query, [CustomerName, Date, Time, TableID], (err, results) => {
+        if (err) {
+            console.error('Error creating reservation:', err);
+            res.status(500).send('Error creating reservation');
+            return;
+        }
+        res.status(201).send('Reservation created successfully');
+    });
+
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

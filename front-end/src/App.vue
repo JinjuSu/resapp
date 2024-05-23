@@ -2,7 +2,7 @@
   <nav>
     <router-link to="/">Home</router-link> |
     <router-link to="/login">Login</router-link> |
-    <router-link to="/reservation">Reservation</router-link>
+    <router-link to="/reservations">Reservation</router-link>
   </nav>
   <router-view/>
 </template>

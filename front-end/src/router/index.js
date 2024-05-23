@@ -21,7 +21,7 @@ const routes = [
     component: LoginView
   },
   {
-    path:'/reservation',
+    path:'/reservations',
     name: 'reservation',
     component: ReservationView
   }
