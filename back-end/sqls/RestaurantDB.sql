@@ -18,8 +18,7 @@ CREATE TABLE Reservation (
     ReservationID INT AUTO_INCREMENT PRIMARY KEY,
     CustomerName VARCHAR(100) NOT NULL,
     Date DATE NOT NULL,
-    StartTime TIME NOT NULL,
-    EndTime TIME NOT NULL,
+    Time TIME NOT NULL,
     TableID INT,
     FOREIGN KEY (TableID) REFERENCES Tables(TableID)
 );
