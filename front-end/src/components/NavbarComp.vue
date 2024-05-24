@@ -17,6 +17,9 @@
         <MDBNavbarItem href="#">
           <router-link class="link-text" to="/menu">Menu</router-link>
         </MDBNavbarItem>
+        <MDBNavbarItem href="#">
+          <router-link class="link-text" to="/reservations">Reservations</router-link>
+        </MDBNavbarItem>
       </MDBNavbarNav>
 
       <MDBBtn outline="dark"
