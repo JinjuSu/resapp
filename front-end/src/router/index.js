@@ -16,16 +16,6 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/about",
-    name: "about",
-    component: AboutView,
-  },
-  {
-    path: "/test",
-    name: "test",
-    component: TestView,
-  },
-  {
     path: "/menu",
     name: "menu",
     component: MenuView,
