@@ -69,3 +69,9 @@
 .text-transparent {
   color: transparent;
 }
+
+.form-width {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 600px;
+}

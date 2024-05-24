@@ -127,8 +127,8 @@ import {
   MDBBtn,
   mdbRipple,
 } from "mdb-vue-ui-kit";
-import { ref, computed } from "vue";
-import { cartItems as initialCartItems } from "@/assets/menu-details/menu.js";
+import { computed } from "vue";
+import { store } from "../assets/menu-details/store";
 
 export default {
   name: "Cart",
@@ -143,13 +143,7 @@ export default {
     mdbRipple,
   },
   setup() {
-    const cartItems = ref(
-      initialCartItems.map((item) => ({
-        ...item,
-        Quantity: 1,
-        TotalPrice: Math.round(item.Price * 1 * 100) / 100,
-      }))
-    );
+    const cartItems = computed(() => store.cartItems);
 
     const totalCartPrice = computed(() => {
       return cartItems.value
@@ -173,7 +167,8 @@ export default {
       menuItem.TotalPrice =
         Math.round(menuItem.Price * menuItem.Quantity * 100) / 100;
     };
-
+    console.log("Retrieved cartItems: ", cartItems);
+    console.log("Produced totalCartPrice: ", totalCartPrice);
     return {
       cartItems,
       totalCartPrice,

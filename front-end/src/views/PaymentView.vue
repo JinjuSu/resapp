@@ -1,92 +1,95 @@
 <template>
-  <div class="container my-5">
-    <form class="row g-3 needs-validation" novalidate>
-      <div class="col-md-4">
-        <label for="validationCustom01" class="form-label">First name</label>
+  <div class="container form-width">
+    <h1>Order No: #1233</h1>
+
+    <form class="needs-validation" @submit.prevent="submitForm">
+      <div>
+        <label for="card-name" class="form-label">Card name</label>
         <input
           type="text"
-          class="form-control"
-          id="validationCustom01"
-          value="Mark"
+          placeholder="John doe"
           required
+          v-model.trim="cardHolderName"
+          class="form-control"
+          @input="checkcardHolderName"
         />
-        <div class="valid-feedback">Looks good!</div>
       </div>
-      <div class="col-md-4">
-        <label for="validationCustom02" class="form-label">Last name</label>
+      <div v-if="errorMsg.cardHolderName" v-bind:style="{ color: 'red' }">
+        {{ errorMsg.cardHolderName }}
+      </div>
+
+      <div>
+        <label for="card-number" class="form-label">Card number</label>
         <input
           type="text"
-          class="form-control"
-          id="validationCustom02"
-          value="Otto"
+          placeholder="4123 4567 8900 5432"
+          maxlength="16"
           required
+          v-model.trim="cardNumber"
+          class="form-control"
+          @input="checkCardNumber"
         />
-        <div class="valid-feedback">Looks good!</div>
       </div>
-      <div class="col-md-4">
-        <label for="validationCustomUsername" class="form-label"
-          >Username</label
-        >
-        <div class="input-group has-validation">
-          <span class="input-group-text" id="inputGroupPrepend">@</span>
+      <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
+        {{ errorMsg.cardNumber }}
+      </div>
+
+      <div class="row justify-content-between my-3">
+        <div class="col-auto">
+          <label for="expiration-date">Expiration date </label>
+
+          <p>
+            <input type="date" v-model="expiryDate" required />
+          </p>
+        </div>
+        <div class="col-auto">
+          <label for="security-code">Security code</label>
           <input
             type="text"
-            class="form-control"
-            id="validationCustomUsername"
-            aria-describedby="inputGroupPrepend"
+            placeholder="123"
+            minlength="3"
+            maxlength="3"
             required
+            v-model.trim="securityCode"
+            class="form-control"
+            @input="checkSecurityCode"
           />
-          <div class="invalid-feedback">Please choose a username.</div>
+          <div v-if="errorMsg.securityCode" v-bind:style="{ color: 'red' }">
+            {{ errorMsg.securityCode }}
+          </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <label for="validationCustom03" class="form-label">City</label>
-        <input
-          type="text"
-          class="form-control"
-          id="validationCustom03"
-          required
-        />
-        <div class="invalid-feedback">Please provide a valid city.</div>
-      </div>
-      <div class="col-md-3">
-        <label for="validationCustom04" class="form-label">State</label>
-        <select class="form-select" id="validationCustom04" required>
-          <option selected disabled value="">Choose...</option>
-          <option>...</option>
-        </select>
-        <div class="invalid-feedback">Please select a valid state.</div>
-      </div>
-      <div class="col-md-3">
-        <label for="validationCustom05" class="form-label">Zip</label>
-        <input
-          type="text"
-          class="form-control"
-          id="validationCustom05"
-          required
-        />
-        <div class="invalid-feedback">Please provide a valid zip.</div>
-      </div>
-      <div class="col-12">
+
+      <!-- Terms and Conditions -->
+      <div>
+        <p>
+          By clicking "Agree to terms and conditions", you accept our
+          <a href="/terms">Terms and Conditions</a>. You agree to pay the total
+          amount shown, which includes all applicable taxes and fees. Your
+          payment information is secure and encrypted. Please review your order
+          carefully.
+        </p>
         <div class="form-check">
           <input
             class="form-check-input"
             type="checkbox"
-            value=""
-            id="invalidCheck"
+            v-model="agree"
             required
           />
-          <label class="form-check-label" for="invalidCheck">
-            Agree to terms and conditions
+          <label class="form-check-label">
+            I have read and agree to terms and conditions
           </label>
-          <div class="invalid-feedback">You must agree before submitting.</div>
         </div>
       </div>
-      <div class="col-12">
-        <button class="btn btn-primary button-shop" type="submit">
-          Submit payment
+      <p>
+        <button
+          type="submit"
+          v-bind:disabled="!formIsFilled"
+          :class="['btn', submitButtonColor]"
+        >
+          Confirm payment: $AU{{ order.price }}
         </button>
-      </div>
+      </p>
     </form>
   </div>
 </template>
@@ -104,7 +107,27 @@ import {
 export default {
   name: "Cart",
   data() {
-    return {};
+    return {
+      cardHolderName: "",
+      cardNumber: "",
+      expiryDate: "",
+      securityCode: "",
+      agree: false,
+      errorMsg: {
+        cardHolderName: "",
+        cardNumber: "",
+        expiryDate: "",
+        securityCode: "",
+        agree: "",
+      },
+      order: {
+        OrderID: null,
+        Items: null,
+        Total: 14.99,
+        PaymentDetail: {},
+        OrderStatus: null,
+      },
+    };
   },
   component: {
     MDBContainer,
@@ -115,6 +138,72 @@ export default {
   },
   directives: {
     mdbRipple,
+  },
+  computed: {
+    formIsFilled: function () {
+      return (
+        this.cardHolderName &&
+        this.cardNumber &&
+        this.expiryDate &&
+        this.securityCode &&
+        this.agree
+      );
+    },
+    submitButtonColor: function () {
+      this.checkSubmit();
+      if (this.formIsFilled && this.canSubmit) {
+        return "btn-dark button-shop";
+      } else {
+        return "btn-outline-secondary button-shop";
+      }
+    },
+  },
+  methods: {
+    checkcardHolderName() {
+      if (!this.cardHolderName.match(/^[a-zA-Z]+$/)) {
+        this.errorMsg.cardHolderName = "Card name is alphabet only";
+      } else {
+        this.errorMsg.cardHolderName = null;
+      }
+    },
+    checkCardNumber() {
+      const visaRegex = /^4[0-9]{12}(?:[0-9]{3})?$/;
+      const masterCardRegex = /^5[1-5][0-9]{14}$/;
+
+      if (this.cardNumber.trim() === "") {
+        this.errorMsg.cardNumber = "Card number is required";
+      } else if (
+        !visaRegex.test(this.cardNumber) &&
+        !masterCardRegex.test(this.cardNumber)
+      ) {
+        this.errorMsg.cardNumber =
+          "Invalid card number. Must be a Visa or MasterCard.";
+      } else {
+        this.errorMsg.cardNumber = "";
+      }
+    },
+    checkSecurityCode() {
+      if (/[^\d]/.test(this.securityCode)) {
+        this.errorMsg.securityCode = "Post code must be number only";
+      } else {
+        this.errorMsg.securityCode = null;
+      }
+    },
+    checkSubmit() {
+      this.canSubmit = true;
+
+      for (let key in this.errorMsg) {
+        if (this.errorMsg[key]) {
+          this.canSubmit = false;
+          break;
+        }
+      }
+    },
+    submitForm() {
+      if (this.canSubmit) {
+        this.$refs.form.submit();
+      }
+    },
   },
 };
 </script>
