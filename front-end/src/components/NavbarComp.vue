@@ -17,41 +17,13 @@
         <MDBNavbarItem href="#">
           <router-link class="link-text" to="/menu">Menu</router-link>
         </MDBNavbarItem>
-        <MDBNavbarItem href="#">
-          <router-link class="link-text" to="/about">About</router-link>
-        </MDBNavbarItem>
-        <MDBNavbarItem>
-          <!-- Navbar dropdown -->
-          <MDBDropdown class="nav-item" v-model="dropdown1">
-            <MDBDropdownToggle
-              tag="a"
-              class="nav-link"
-              @click="dropdown1 = !dropdown1"
-              >Dropdown</MDBDropdownToggle
-            >
-            <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem href="#">Action</MDBDropdownItem>
-              <MDBDropdownItem href="#">Another Action</MDBDropdownItem>
-              <MDBDropdownItem href="#">Something else here</MDBDropdownItem>
-            </MDBDropdownMenu>
-          </MDBDropdown>
-        </MDBNavbarItem>
-        <MDBNavbarItem to="#" disabled> Disabled </MDBNavbarItem>
       </MDBNavbarNav>
-      <!-- Search form -->
-      <!-- <form class="d-flex input-group w-auto">
-        <input
-          type="search"
-          class="form-control"
-          placeholder="Type query"
-          aria-label="Search"
-        />
-        <MDBBtn outline="primary"> Search </MDBBtn>
-      </form> -->
 
-      <MDBBtn color="dark"> Sign up</MDBBtn>
-      <MDBBtn outline="dark"><router-link to="/login"
-          style="text-decoration: none; color: black;">Log in</router-link></MDBBtn>
+      <MDBBtn outline="dark"
+        ><router-link to="/login" style="text-decoration: none; color: black"
+          >Log in</router-link
+        ></MDBBtn
+      >
       <!-- Cart icon logic -->
 
       <MDBBtn
