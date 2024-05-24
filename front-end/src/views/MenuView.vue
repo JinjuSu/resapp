@@ -18,15 +18,16 @@
               <div class="card-body">
                 <h5 class="card-title">{{ menuItem.ItemName }}</h5>
                 <p class="card-text">{{ menuItem.Price }}</p>
-                <router-link :to="'/cart/' + menuItem.ItemID">
-                  <a
-                    href="#!"
-                    class="btn btn-sm btn-dark button-shop"
-                    data-mdb-ripple-init
-                  >
-                    Add to cart
-                  </a>
-                </router-link>
+                <!-- <router-link :to="'/cart/' + menuItem.ItemID"></router-link>
+ -->
+                <a
+                  href="#!"
+                  class="btn btn-sm btn-dark button-shop"
+                  data-mdb-ripple-init
+                  @click="addToCart(menuItem)"
+                >
+                  Add to cart
+                </a>
               </div>
             </div>
           </div>
@@ -74,6 +75,8 @@ import {
 } from "mdb-vue-ui-kit";
 import { ref, computed } from "vue";
 import { menu } from "../assets/menu-details/menu.js";
+// import { cartItems } from "@/assets/menu-details/menu.js";
+import { store } from "../assets/menu-details/store";
 
 export default {
   name: "Products",
@@ -81,8 +84,10 @@ export default {
     return {
       searchItem: "",
       menu,
+      // cartItems: [],
     };
   },
+  // props: ["cartItems"],
   mounted() {
     console.log(menu);
   },
@@ -99,7 +104,7 @@ export default {
   setup() {
     const searchItem = ref("");
     const currentPage = ref(1);
-    const itemsPerPage = ref(6);
+    const itemsPerPage = ref(9);
 
     const filteredProducts = computed(() => {
       return menu.filter((product) =>
@@ -122,6 +127,10 @@ export default {
         currentPage.value = page;
       }
     }
+    // const addToCart = (menuItem) => {
+    //   store.addToCart(menuItem);
+    //   console.log("Cart Items:", store.cartItems);
+    // };
 
     return {
       searchItem,
@@ -131,6 +140,13 @@ export default {
       totalPages,
       changePage,
     };
+  },
+  methods: {
+    addToCart(menuItem) {
+      store.addToCart(menuItem);
+      //this.cartItems.push(itemId);
+      console.log("Cart Items:", store.cartItems);
+    },
   },
 };
 </script>

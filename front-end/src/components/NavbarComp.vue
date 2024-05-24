@@ -11,19 +11,16 @@
     ></MDBNavbarToggler>
     <MDBCollapse v-model="collapse1" id="navbarSupportedContent">
       <MDBNavbarNav class="mb-2 mb-lg-0">
-        <MDBNavbarItem to="#" active>
-          <router-link class="link-text" to="/">Home</router-link>
-        </MDBNavbarItem>
+        <router-link class="link-text" to="/">
+          <MDBNavbarItem href="#" active> Home </MDBNavbarItem>
+        </router-link>
 
         <router-link class="link-text" to="/menu">
           <MDBNavbarItem href="#">Menu </MDBNavbarItem></router-link
         >
-
-        <MDBNavbarItem href="#">
-          <router-link class="link-text" to="/reservations"
-            >Reservations</router-link
-          >
-        </MDBNavbarItem>
+        <router-link class="link-text" to="/reservations">
+          <MDBNavbarItem href="#"> Reservations </MDBNavbarItem></router-link
+        >
       </MDBNavbarNav>
 
       <MDBBtn outline="dark"
