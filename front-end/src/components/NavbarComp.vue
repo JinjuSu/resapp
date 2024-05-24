@@ -50,7 +50,8 @@
       </form> -->
 
       <MDBBtn color="dark"> Sign up</MDBBtn>
-      <MDBBtn outline="dark">Log in</MDBBtn>
+      <MDBBtn outline="dark"><router-link to="/login"
+          style="text-decoration: none; color: black;">Log in</router-link></MDBBtn>
       <!-- Cart icon logic -->
 
       <MDBBtn
