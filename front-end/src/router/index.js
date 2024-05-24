@@ -7,6 +7,7 @@ import CartView from "../views/CartView.vue";
 import PaymentView from "../views/PaymentView.vue";
 import OrdersView from '../views/OrdersView.vue'
 import LoginView from '../views/LoginView.vue'
+import ReservationView from '../views/ReservationView.vue'
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginView
+  },
+  {
+    path: '/reservations',
+    name: 'reservations',
+    component: ReservationView
   }
 ];
 
