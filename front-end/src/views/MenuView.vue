@@ -75,7 +75,6 @@ import {
 } from "mdb-vue-ui-kit";
 import { ref, computed } from "vue";
 import { menu } from "../assets/menu-details/menu.js";
-// import { cartItems } from "@/assets/menu-details/menu.js";
 import { store } from "../assets/menu-details/store";
 
 export default {
@@ -84,10 +83,8 @@ export default {
     return {
       searchItem: "",
       menu,
-      // cartItems: [],
     };
   },
-  // props: ["cartItems"],
   mounted() {
     console.log(menu);
   },
