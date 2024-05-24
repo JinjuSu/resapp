@@ -5,6 +5,8 @@ import TestView from "../views/TestView.vue";
 import MenuView from "../views/MenuView.vue";
 import CartView from "../views/CartView.vue";
 import PaymentView from "../views/PaymentView.vue";
+import OrdersView from '../views/OrdersView.vue'
+import LoginView from '../views/LoginView.vue'
 
 const routes = [
   {
@@ -37,6 +39,16 @@ const routes = [
     name: "payment",
     component: PaymentView,
   },
+  {
+    path: '/order',
+    name: 'order',
+    component: OrdersView
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView
+  }
 ];
 
 const router = createRouter({
