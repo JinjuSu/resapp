@@ -1,0 +1,9 @@
+1. Install Express, CORS, MySQL ('npm install cors express mysql')
+2. Install Axios ('npm install axios')
+3. Change the settings on serve.js file - Database name with the one in your phpmyadmin
+
+Connecting and Running:
+1. cd back-end
+2. node server.js
+3. cd ../front-end
+4. npm run serve

@@ -14,11 +14,15 @@
         <MDBNavbarItem to="#" active>
           <router-link class="link-text" to="/">Home</router-link>
         </MDBNavbarItem>
+
+        <router-link class="link-text" to="/menu">
+          <MDBNavbarItem href="#">Menu </MDBNavbarItem></router-link
+        >
+
         <MDBNavbarItem href="#">
-          <router-link class="link-text" to="/menu">Menu</router-link>
-        </MDBNavbarItem>
-        <MDBNavbarItem href="#">
-          <router-link class="link-text" to="/reservations">Reservations</router-link>
+          <router-link class="link-text" to="/reservations"
+            >Reservations</router-link
+          >
         </MDBNavbarItem>
       </MDBNavbarNav>
 

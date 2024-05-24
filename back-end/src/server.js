@@ -10,7 +10,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "restaurant",
+  database: "RestaurantApp",
 });
 
 db.connect((err) => {
@@ -54,24 +54,24 @@ app.put("/orders/:id", (req, res) => {
   });
 });
 
-app.post('/reservations', (req, res) => {
+app.post("/reservations", (req, res) => {
   const { CustomerName, Date, Time, TableID } = req.body;
-  console.log('CustomerName:', CustomerName);
-  console.log('Date:', Date);
-  console.log('Time:', Time);
-  console.log('TableID:', TableID);
+  console.log("CustomerName:", CustomerName);
+  console.log("Date:", Date);
+  console.log("Time:", Time);
+  console.log("TableID:", TableID);
 
-  const query = 'INSERT INTO Reservation (CustomerName, Date, Time, TableID) VALUES (?, ?, ?, ?)';
+  const query =
+    "INSERT INTO Reservation (CustomerName, Date, Time, TableID) VALUES (?, ?, ?, ?)";
 
   db.query(query, [CustomerName, Date, Time, TableID], (err, results) => {
-      if (err) {
-          console.error('Error creating reservation:', err);
-          res.status(500).send('Error creating reservation');
-          return;
-      }
-      res.status(201).send('Reservation created successfully');
+    if (err) {
+      console.error("Error creating reservation:", err);
+      res.status(500).send("Error creating reservation");
+      return;
+    }
+    res.status(201).send("Reservation created successfully");
   });
-
 });
 
 // New endpoint to fetch the menu items

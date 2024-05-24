@@ -1,33 +1,32 @@
 <template>
   <MDBContainer light bg="light ">
     <div class="container py-5" v-if="cartItems.length > 0">
-      <div v-for="product in cartItems" :key="product.id">
-        <div class="row justify-content-center text-center">
+      <div v-for="menuItem in cartItems" :key="menuItem.ItemID">
+        <div class="row justify-content-between">
           <div class="col-8 col-md-3">
             <!-- Image goes here -->
             <div
               class="card border-0 shadow-none text-end image-product bg-transparent d-flex justify-content-end"
             >
-              <img :src="product.image" class="img-fluid rounded-start" />
+              <img :src="menuItem.Image" class="img-fluid rounded-start" />
             </div>
           </div>
 
           <div class="col-8 col-md-3">
-            <!-- Second card goes here -->
+            <!-- Menu name goes here -->
             <div class="card border-0 shadow-none text-start bg-transparent">
               <div class="card-body">
-                <p>{{ product.name }}</p>
-                <p>{{ product.price }}</p>
+                <h4>{{ menuItem.ItemName }}</h4>
               </div>
             </div>
           </div>
           <div class="col-8 col-md-3">
-            <!-- Third card goes here -->
+            <!-- Decrementer and Incrementer group -->
+
             <div class="card border-0 shadow-none text-start bg-transparent">
               <div class="card-body">
-                <!-- Decrenmentor and tncrementor tool group -->
+                <p><strong> Quantity </strong></p>
                 <div class="row">
-                  <div class="col-auto">Qty.</div>
                   <!-- Minus icon -->
                   <div class="col-auto">
                     <div class="row border rounded">
@@ -35,18 +34,18 @@
                         <a v-mdb-ripple>
                           <i
                             class="fas fa-minus-square image-icon-qty"
-                            v-on:click="deductFunction(product)"
+                            v-on:click="deductFunction(menuItem)"
                           ></i>
                         </a>
                       </div>
-                      <!-- Number icon -->
-                      <div class="col-auto">{{ product.qty }}</div>
+                      <!-- Quantity-->
+                      <div class="col-auto">{{ menuItem.Quantity }}</div>
                       <!-- Add icon -->
                       <div class="col-auto">
                         <a v-mdb-ripple>
                           <i
                             class="fas fa-plus-square image-icon-qty"
-                            v-on:click="addFunction(product)"
+                            v-on:click="addFunction(menuItem)"
                           ></i>
                         </a>
                       </div>
@@ -54,22 +53,33 @@
                   </div>
                   <!-- remove icon -->
                   <div class="col">
-                    <i class="fas fa-trash-alt image-icon-trash"></i>
+                    <i class="fas fa-trash-alt image-icon-trash" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="col-8 col-md-3">
-            <!-- Third card goes here -->
-            <div class="card border-0 shadow-none text-start bg-transparent">
-              <div class="card-body">
-                <p>AU$ {{ product.price }}</p>
+            <!-- Total price goes here -->
+            <div class="card border-0 shadow-none bg-transparent">
+              <div class="card-body text-end">
+                <p><strong> Total</strong></p>
+                <p>AU$ {{ menuItem.TotalPrice }}</p>
               </div>
             </div>
           </div>
         </div>
         <hr />
+      </div>
+
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <h2>Total</h2>
+        </div>
+        <div class="col-auto">
+          <h2>AU$ {{ totalCartPrice }}</h2>
+          <!-- Display the computed total price -->
+        </div>
       </div>
 
       <div class="my-5">
@@ -93,7 +103,7 @@
             class="img-fluid image-empty-cart"
           />
           <div class="">
-            <router-link :to="'/products'"
+            <router-link :to="'/menu'"
               ><a
                 href="#!"
                 class="btn btn-sm btn-dark button-shop"
@@ -109,7 +119,6 @@
 </template>
 
 <script>
-import { cartItems } from "@/assets/menu-details/menu.js";
 import {
   MDBContainer,
   MDBCol,
@@ -118,24 +127,12 @@ import {
   MDBBtn,
   mdbRipple,
 } from "mdb-vue-ui-kit";
+import { ref, computed } from "vue";
+import { cartItems as initialCartItems } from "@/assets/menu-details/menu.js";
 
 export default {
   name: "Cart",
-  data() {
-    return {
-      cartItems,
-      product: {
-        id: "",
-        name: "",
-        price: "",
-        description: "",
-        rating: "",
-        image: "",
-        qty: "",
-      },
-    };
-  },
-  component: {
+  components: {
     MDBContainer,
     MDBCol,
     MDBRow,
@@ -145,15 +142,44 @@ export default {
   directives: {
     mdbRipple,
   },
-  methods: {
-    addFunction(product) {
-      return product.qty++;
-    },
-    deductFunction(product) {
-      if (product.qty > 0) {
-        return product.qty--;
+  setup() {
+    const cartItems = ref(
+      initialCartItems.map((item) => ({
+        ...item,
+        Quantity: 1,
+        TotalPrice: Math.round(item.Price * 1 * 100) / 100,
+      }))
+    );
+
+    const totalCartPrice = computed(() => {
+      return cartItems.value
+        .reduce((acc, item) => acc + item.TotalPrice, 0)
+        .toFixed(2);
+    });
+
+    const addFunction = (menuItem) => {
+      menuItem.Quantity++;
+      updateTotalPrice(menuItem);
+    };
+
+    const deductFunction = (menuItem) => {
+      if (menuItem.Quantity > 1) {
+        menuItem.Quantity--;
+        updateTotalPrice(menuItem);
       }
-    },
+    };
+
+    const updateTotalPrice = (menuItem) => {
+      menuItem.TotalPrice =
+        Math.round(menuItem.Price * menuItem.Quantity * 100) / 100;
+    };
+
+    return {
+      cartItems,
+      totalCartPrice,
+      addFunction,
+      deductFunction,
+    };
   },
 };
 </script>

@@ -27,14 +27,8 @@
 }
 
 .image-product {
-  max-width: 150px;
-  max-height: 150px;
-}
-
-.image-product-details {
   max-width: 300px;
   max-height: 300px;
-  margin-bottom: 100px;
 }
 
 .image-empty-cart {
@@ -70,4 +64,8 @@
 .footcomp {
   background-color: black;
   height: 100px;
+}
+
+.text-transparent {
+  color: transparent;
 }

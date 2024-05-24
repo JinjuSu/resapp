@@ -1,33 +1,32 @@
 <template>
   <div class="container my-5">
     <!-- Search bar -->
-
-    <MDBInput class="mb-4" v-model="searchProduct" placeholder="Search" />
+    <MDBInput class="mb-4" v-model="searchItem" placeholder="Search" />
     <div class="row mb-4">
       <!-- Product column 3 cards per row -->
       <div class="col">
         <div class="row">
           <div
             class="col-4"
-            v-for="product in paginatedProducts"
-            :key="product.id"
+            v-for="menuItem in paginatedProducts"
+            :key="menuItem.ItemID"
           >
             <div class="card grid-wrap">
               <div class="card-header text-center">
-                <img class="image-product" :src="product.image" />
+                <img class="img-fluid" :src="menuItem.Image" />
               </div>
               <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">{{ product.price }}</p>
-                <router-link :to="'/product/' + product.id">
+                <h5 class="card-title">{{ menuItem.ItemName }}</h5>
+                <p class="card-text">{{ menuItem.Price }}</p>
+                <router-link :to="'/cart/' + menuItem.ItemID">
                   <a
                     href="#!"
                     class="btn btn-sm btn-dark button-shop"
                     data-mdb-ripple-init
                   >
-                    Shop now
-                  </a></router-link
-                >
+                    Add to cart
+                  </a>
+                </router-link>
               </div>
             </div>
           </div>
@@ -74,22 +73,18 @@ import {
   MDBPageItem,
 } from "mdb-vue-ui-kit";
 import { ref, computed } from "vue";
-import { products } from "../assets/menu-details/menu.js";
+import { menu } from "../assets/menu-details/menu.js";
 
 export default {
   name: "Products",
   data() {
     return {
-      searchProduct: {
-        id: "",
-        name: "",
-        price: "",
-        description: "",
-        img: "",
-      },
-      products,
-      test: "test printing",
+      searchItem: "",
+      menu,
     };
+  },
+  mounted() {
+    console.log(menu);
   },
   components: {
     MDBContainer,
@@ -102,13 +97,13 @@ export default {
     MDBPageItem,
   },
   setup() {
-    const searchProduct = ref("");
+    const searchItem = ref("");
     const currentPage = ref(1);
     const itemsPerPage = ref(6);
 
     const filteredProducts = computed(() => {
-      return products.filter((product) =>
-        product.name.toLowerCase().includes(searchProduct.value.toLowerCase())
+      return menu.filter((product) =>
+        product.ItemName.toLowerCase().includes(searchItem.value.toLowerCase())
       );
     });
 
@@ -123,26 +118,19 @@ export default {
     });
 
     function changePage(page) {
-      currentPage.value = page;
+      if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+      }
     }
 
     return {
-      searchProduct,
+      searchItem,
       filteredProducts,
       paginatedProducts,
       currentPage,
       totalPages,
       changePage,
     };
-  },
-  computed: {
-    filterProducts: function () {
-      return this.products.filter((product) => {
-        return product.name // products please find an item whose name matches the searchProduct.name
-          .toLowerCase()
-          .includes(this.searchProduct.toLowerCase());
-      });
-    },
   },
 };
 </script>
