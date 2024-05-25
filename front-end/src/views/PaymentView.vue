@@ -1,96 +1,122 @@
 <template>
   <div class="container form-width">
-    <h1>Order No: #{{ order.OrderID }}</h1>
+    <div v-if="order.OrderStatus == 'Waiting for payment'">
+      <h1>Order No: #{{ order.OrderID }}</h1>
 
-    <form class="needs-validation" @submit.prevent="submitForm">
-      <div>
-        <label for="card-name" class="form-label">Card name</label>
-        <input
-          type="text"
-          placeholder="John doe"
-          required
-          v-model.trim="cardHolderName"
-          class="form-control"
-          @input="checkcardHolderName"
-        />
-      </div>
-      <div v-if="errorMsg.cardHolderName" v-bind:style="{ color: 'red' }">
-        {{ errorMsg.cardHolderName }}
-      </div>
-
-      <div>
-        <label for="card-number" class="form-label">Card number</label>
-        <input
-          type="text"
-          placeholder="4123 4567 8900 5432"
-          maxlength="16"
-          required
-          v-model.trim="cardNumber"
-          class="form-control"
-          @input="checkCardNumber"
-        />
-      </div>
-      <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
-        {{ errorMsg.cardNumber }}
-      </div>
-
-      <div class="row justify-content-between my-3">
-        <div class="col-auto">
-          <label for="expiration-date">Expiration date </label>
-
-          <p>
-            <input type="date" v-model="expiryDate" required />
-          </p>
-        </div>
-        <div class="col-auto">
-          <label for="security-code">Security code</label>
+      <h2>Order Satus: {{ order.OrderStatus }}</h2>
+      <form class="needs-validation" @submit.prevent="submitForm">
+        <div>
+          <label for="card-name" class="form-label">Card name</label>
           <input
             type="text"
-            placeholder="123"
-            minlength="3"
-            maxlength="3"
+            placeholder="John doe"
             required
-            v-model.trim="securityCode"
+            v-model.trim="cardHolderName"
             class="form-control"
-            @input="checkSecurityCode"
+            @input="checkcardHolderName"
           />
-          <div v-if="errorMsg.securityCode" v-bind:style="{ color: 'red' }">
-            {{ errorMsg.securityCode }}
+        </div>
+        <div v-if="errorMsg.cardHolderName" v-bind:style="{ color: 'red' }">
+          {{ errorMsg.cardHolderName }}
+        </div>
+
+        <div>
+          <label for="card-number" class="form-label">Card number</label>
+          <input
+            type="text"
+            placeholder="4123 4567 8900 5432"
+            maxlength="16"
+            required
+            v-model.trim="cardNumber"
+            class="form-control"
+            @input="checkCardNumber"
+          />
+        </div>
+        <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
+          {{ errorMsg.cardNumber }}
+        </div>
+
+        <div class="row justify-content-between my-3">
+          <div class="col-auto">
+            <label for="expiration-date">Expiration date </label>
+
+            <p>
+              <input type="date" v-model="expiryDate" required />
+            </p>
+          </div>
+          <div class="col-auto">
+            <label for="security-code">Security code</label>
+            <input
+              type="text"
+              placeholder="123"
+              minlength="3"
+              maxlength="3"
+              required
+              v-model.trim="securityCode"
+              class="form-control"
+              @input="checkSecurityCode"
+            />
+            <div v-if="errorMsg.securityCode" v-bind:style="{ color: 'red' }">
+              {{ errorMsg.securityCode }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div>
+          <p>
+            By clicking "Agree to terms and conditions", you accept our
+            <a href="/terms">Terms and Conditions</a>. You agree to pay the
+            total amount shown, which includes all applicable taxes and fees.
+            Your payment information is secure and encrypted. Please review your
+            order carefully.
+          </p>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              v-model="agree"
+              required
+            />
+            <label class="form-check-label">
+              I have read and agree to terms and conditions
+            </label>
+          </div>
+        </div>
+        <p>
+          <button
+            type="submit"
+            v-bind:disabled="!formIsFilled"
+            :class="['btn', submitButtonColor]"
+          >
+            Confirm payment: $AU {{ order.Total }}
+          </button>
+        </p>
+      </form>
+    </div>
+    <div v-else>
+      <div class="row justify-content-center">
+        <div class="col-auto ms-0 text-center">
+          <h1>Payment completed</h1>
+          <div class="my-5">
+            <img src="../assets/icons/complete-icon.png" class="img-fluid" />
+          </div>
+          <div>
+            <p>Your order is now being prepared.</p>
+          </div>
+          <div class="my-4">
+            <router-link :to="'/menu'"
+              ><a
+                href="#!"
+                class="btn btn-sm btn-dark button-shop"
+                data-mdb-ripple-init
+                >Go to home
+              </a></router-link
+            >
           </div>
         </div>
       </div>
-
-      <!-- Terms and Conditions -->
-      <div>
-        <p>
-          By clicking "Agree to terms and conditions", you accept our
-          <a href="/terms">Terms and Conditions</a>. You agree to pay the total
-          amount shown, which includes all applicable taxes and fees. Your
-          payment information is secure and encrypted. Please review your order
-          carefully.
-        </p>
-        <div class="form-check">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="agree"
-            required
-          />
-          <label class="form-check-label">
-            I have read and agree to terms and conditions
-          </label>
-        </div>
-      </div>
-      <p>
-        <button
-          type="submit"
-          v-bind:disabled="!formIsFilled"
-          :class="['btn', submitButtonColor]"
-        >
-          Confirm payment: $AU {{ order.Total }}
-        </button>
-      </p>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -127,6 +153,7 @@ export default {
       },
       order: {
         OrderID: this.orderID,
+        OrderStatus: "",
         Total: 0,
       },
     };
@@ -181,7 +208,7 @@ export default {
       }
     },
     checkcardHolderName() {
-      if (!this.cardHolderName.match(/^[a-zA-Z]+$/)) {
+      if (!this.cardHolderName.trim().match(/^[a-zA-Z]+$/)) {
         this.errorMsg.cardHolderName = "Card name is alphabet only";
       } else {
         this.errorMsg.cardHolderName = null;

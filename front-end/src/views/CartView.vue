@@ -3,17 +3,21 @@
     <div class="container py-5" v-if="cartItems.length > 0">
       <div class="row justify-content-between">
         <div class="col-auto">
-          <h2>Table</h2>
+          <h2>Table No:</h2>
         </div>
         <div class="col-auto text-end">
           <input
             type="text"
             minlength="1"
-            maxlength="3"
-            placeholder="000"
+            maxlength="2"
+            placeholder="00"
             required
             v-model="order.TableID"
+            @input="checkSubmit"
           />
+          <div v-if="errorMsg" v-bind:style="{ color: 'red' }">
+            {{ errorMsg }}
+          </div>
         </div>
       </div>
 
@@ -97,12 +101,15 @@
           <!-- Display the computed total price -->
         </div>
       </div>
-
+      <div v-if="errorMsg" v-bind:style="{ color: 'red' }">
+        {{ errorMsg }}
+      </div>
       <div class="my-3">
         <a
           href="#!"
-          class="btn btn-sm btn-dark button-shop"
           data-mdb-ripple-init
+          v-bind:disabled="!formIsFilled"
+          :class="['btn', submitButtonColor]"
           @click="submitOrder"
         >
           Proceed to check out
@@ -123,7 +130,7 @@
                 href="#!"
                 class="btn btn-sm btn-dark button-shop"
                 data-mdb-ripple-init
-                >Start browsing
+                >Start ordering
               </a></router-link
             >
           </div>
@@ -166,14 +173,28 @@ export default {
         Items: store.cartItems,
         Total: this.totalCartPrice,
         PaymentDetails: {},
-        OrderStatus: "Waitng for payment",
+        OrderStatus: "Waiting for payment",
       },
+      errorMsg: "",
       message: "",
     };
   },
   mounted() {
     console.log("CartView, this.order :", this.order);
     this.updateOrderDetails();
+  },
+  computed: {
+    formIsFilled: function () {
+      return this.order.TableID;
+    },
+    submitButtonColor: function () {
+      this.checkSubmit();
+      if (this.formIsFilled && this.canSubmit) {
+        return "btn-dark button-shop";
+      } else {
+        return "btn-outline-secondary button-shop";
+      }
+    },
   },
 
   setup() {
@@ -211,11 +232,30 @@ export default {
     };
   },
   methods: {
+    checkTableID() {
+      console.log(this.order.TableID);
+      if (!this.order.TableID) {
+        this.errorMsg = "Table number is required";
+      } else {
+        this.errorMsg = null;
+      }
+    },
+    checkSubmit() {
+      this.canSubmit = true;
+
+      for (let key in this.message) {
+        if (this.message[key]) {
+          this.canSubmit = false;
+          break;
+        }
+      }
+    },
     updateOrderDetails() {
       this.order.Items = store.cartItems;
       this.order.Total = this.totalCartPrice;
     },
     async submitOrder() {
+      this.checkTableID();
       this.order.Timestamp = new Date()
         .toISOString()
         .slice(0, 19)

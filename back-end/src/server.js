@@ -51,7 +51,6 @@ app.get("/orders/:id", (req, res) => {
 });
 
 // enpoints fot posting order payment in Payment.vue and order status in OrdersView.vue
-
 app.put("/orders/:id", (req, res) => {
   const orderId = req.params.id;
   const { PaymentDetails, OrderStatus } = req.body;
