@@ -7,3 +7,4 @@ Connecting and Running:
 2. node server.js
 3. cd ../front-end
 4. npm run serve
+

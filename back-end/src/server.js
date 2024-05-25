@@ -33,25 +33,49 @@ app.get("/orders", (req, res) => {
   });
 });
 
-app.put("/orders/:id", (req, res) => {
+app.get("/orders/:id", (req, res) => {
   const orderId = req.params.id;
-  const { OrderStatus } = req.body;
-  const query = "UPDATE orders SET OrderStatus = ? WHERE OrderID = ?";
-
-  console.log(`Updating order ${orderId} with status ${OrderStatus}`);
-
-  db.query(query, [OrderStatus, orderId], (err, results) => {
+  const query = "SELECT * FROM Orders WHERE OrderID = ?";
+  db.query(query, [orderId], (err, results) => {
     if (err) {
-      console.error("Error updating order status:", err);
-      res.status(500).send("Error updating order status");
+      console.error("Error fetching order:", err);
+      res.status(500).send("Error fetching order");
       return;
     }
-    if (results.affectedRows === 0) {
+    if (results.length === 0) {
       res.status(404).send("Order not found");
       return;
     }
-    res.send("Order status updated successfully");
+    res.json(results[0]);
   });
+});
+
+// enpoints fot posting order payment in Payment.vue and order status in OrdersView.vue
+
+app.put("/orders/:id", (req, res) => {
+  const orderId = req.params.id;
+  const { PaymentDetails, OrderStatus } = req.body;
+  const query =
+    "UPDATE Orders SET PaymentDetails = ?, OrderStatus = ? WHERE OrderID = ?";
+
+  console.log(`Updating order ${orderId} with status ${OrderStatus}`);
+
+  db.query(
+    query,
+    [JSON.stringify(PaymentDetails), OrderStatus, orderId],
+    (err, results) => {
+      if (err) {
+        console.error("Error updating order payment details:", err);
+        res.status(500).send("Error updating order payment details");
+        return;
+      }
+      if (results.affectedRows === 0) {
+        res.status(404).send("Order not found");
+        return;
+      }
+      res.send("Order payment details updated successfully");
+    }
+  );
 });
 
 app.post("/reservations", (req, res) => {
@@ -85,6 +109,44 @@ app.get("/menu", (req, res) => {
     }
     res.json(results);
   });
+});
+
+// enpoints for order submission in CartView.vue
+app.post("/orders", (req, res) => {
+  const { Timestamp, TableID, Items, Total, PaymentDetails, OrderStatus } =
+    req.body;
+  console.log("Timestamp:", Timestamp);
+  console.log("TableID:", TableID);
+  console.log("Items:", Items);
+  console.log("Total:", Total);
+  console.log("PaymentDetails:", PaymentDetails);
+  console.log("OrderStatus:", OrderStatus);
+
+  const query =
+    "INSERT INTO Orders (Timestamp, TableID, Items, Total, PaymentDetails, OrderStatus) VALUES (?, ?, ?, ?, ?, ?)";
+  db.query(
+    query,
+    [
+      Timestamp,
+      TableID,
+      JSON.stringify(Items),
+      Total,
+      JSON.stringify(PaymentDetails),
+      OrderStatus,
+    ],
+    (err, results) => {
+      if (err) {
+        console.error("Error creating order:", err);
+        res.status(500).send("Error creating order");
+        return;
+      }
+      // Return the OrderID of the newly created order
+      res.status(201).send({
+        OrderID: results.insertId,
+        message: "Order created successfully",
+      });
+    }
+  );
 });
 
 const PORT = process.env.PORT || 3000;

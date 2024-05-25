@@ -1,6 +1,6 @@
 <template>
   <div class="container form-width">
-    <h1>Order No: #1233</h1>
+    <h1>Order No: #{{ order.OrderID }}</h1>
 
     <form class="needs-validation" @submit.prevent="submitForm">
       <div>
@@ -87,7 +87,7 @@
           v-bind:disabled="!formIsFilled"
           :class="['btn', submitButtonColor]"
         >
-          Confirm payment: $AU{{ order.price }}
+          Confirm payment: $AU {{ order.Total }}
         </button>
       </p>
     </form>
@@ -103,9 +103,14 @@ import {
   MDBBtn,
   mdbRipple,
 } from "mdb-vue-ui-kit";
+import axios from "axios";
 
 export default {
-  name: "Cart",
+  name: "Payment",
+  props: {
+    orderID: String,
+    required: true,
+  },
   data() {
     return {
       cardHolderName: "",
@@ -121,13 +126,15 @@ export default {
         agree: "",
       },
       order: {
-        OrderID: null,
-        Items: null,
-        Total: 14.99,
-        PaymentDetail: {},
-        OrderStatus: null,
+        OrderID: this.orderID,
+        Total: 0,
       },
     };
+  },
+  async mounted() {
+    console.log("PaymentView, this.OrderID: ", this.orderID);
+    console.log("PaymentView, order: ", this.order);
+    await this.fetchOrderDetails();
   },
   component: {
     MDBContainer,
@@ -159,6 +166,20 @@ export default {
     },
   },
   methods: {
+    async fetchOrderDetails() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/orders/${this.orderID}`
+        );
+        this.order = response.data;
+        console.log("Fetched order details: ", this.order);
+      } catch (error) {
+        console.error(
+          "Error fetching order details:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    },
     checkcardHolderName() {
       if (!this.cardHolderName.match(/^[a-zA-Z]+$/)) {
         this.errorMsg.cardHolderName = "Card name is alphabet only";
@@ -199,9 +220,34 @@ export default {
         }
       }
     },
-    submitForm() {
+    async submitForm() {
       if (this.canSubmit) {
-        this.$refs.form.submit();
+        try {
+          const paymentDetails = {
+            CardType: null,
+            CardNumber: this.cardNumber,
+            ExpiryDate: this.expiryDate,
+            CardHolderName: this.cardHolderName,
+          };
+
+          const response = await axios.put(
+            `http://localhost:3000/orders/${this.orderID}`,
+            {
+              PaymentDetails: paymentDetails,
+              OrderStatus: "Pending",
+            }
+          );
+
+          console.log("Payment submitted!", response.data);
+          this.message = "Payment submitted!";
+        } catch (error) {
+          console.error(
+            "Error submitting payment:",
+            error.response ? error.response.data : error.message
+          );
+          this.message =
+            "There was an error submitting your payment. Please try again.";
+        }
       }
     },
   },
