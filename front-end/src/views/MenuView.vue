@@ -18,8 +18,6 @@
               <div class="card-body">
                 <h5 class="card-title">{{ menuItem.ItemName }}</h5>
                 <p class="card-text">{{ menuItem.Price }}</p>
-                <!-- <router-link :to="'/cart/' + menuItem.ItemID"></router-link>
- -->
                 <a
                   href="#!"
                   class="btn btn-sm btn-dark button-shop"

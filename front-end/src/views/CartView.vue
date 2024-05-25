@@ -1,6 +1,22 @@
 <template>
   <MDBContainer light bg="light ">
     <div class="container py-5" v-if="cartItems.length > 0">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <h2>Table</h2>
+        </div>
+        <div class="col-auto text-end">
+          <input
+            type="text"
+            minlength="1"
+            maxlength="3"
+            placeholder="000"
+            required
+            v-model="order.TableID"
+          />
+        </div>
+      </div>
+
       <div v-for="menuItem in cartItems" :key="menuItem.ItemID">
         <div class="row justify-content-between">
           <div class="col-8 col-md-3">
@@ -72,7 +88,7 @@
         <hr />
       </div>
 
-      <div class="row justify-content-between">
+      <div class="row justify-content-between my-3">
         <div class="col-auto">
           <h2>Total</h2>
         </div>
@@ -82,16 +98,15 @@
         </div>
       </div>
 
-      <div class="my-5">
-        <router-link :to="'/payment'">
-          <a
-            href="#!"
-            class="btn btn-sm btn-dark button-shop"
-            data-mdb-ripple-init
-          >
-            Proceed to check out
-          </a>
-        </router-link>
+      <div class="my-3">
+        <a
+          href="#!"
+          class="btn btn-sm btn-dark button-shop"
+          data-mdb-ripple-init
+          @click="submitOrder"
+        >
+          Proceed to check out
+        </a>
       </div>
     </div>
     <div v-else-if="cartItems.length === 0" class="container my-5 text-center">
@@ -129,6 +144,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { computed } from "vue";
 import { store } from "../assets/menu-details/store";
+import axios from "axios";
 
 export default {
   name: "Cart",
@@ -142,6 +158,24 @@ export default {
   directives: {
     mdbRipple,
   },
+  data() {
+    return {
+      order: {
+        Timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+        TableID: "",
+        Items: store.cartItems,
+        Total: this.totalCartPrice,
+        PaymentDetails: {},
+        OrderStatus: "Waitng for payment",
+      },
+      message: "",
+    };
+  },
+  mounted() {
+    console.log("CartView, this.order :", this.order);
+    this.updateOrderDetails();
+  },
+
   setup() {
     const cartItems = computed(() => store.cartItems);
 
@@ -175,6 +209,61 @@ export default {
       addFunction,
       deductFunction,
     };
+  },
+  methods: {
+    updateOrderDetails() {
+      this.order.Items = store.cartItems;
+      this.order.Total = this.totalCartPrice;
+    },
+    async submitOrder() {
+      this.order.Timestamp = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+      this.updateOrderDetails();
+
+      try {
+        console.log("Submitting order with data:", this.order);
+        const response = await axios.post(
+          "http://localhost:3000/orders",
+          this.order
+        );
+        console.log("CartView: Order created!", response.data);
+        this.message = "Order created!";
+
+        const orderId = response.data.OrderID;
+        if (!orderId) {
+          throw new Error("OrderID not found in response");
+        } else {
+          console.log("CartView, New OrderID:", orderId);
+        }
+
+        // Clear the order
+        this.order = {
+          Timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+          TableID: "",
+          Items: [],
+          Total: 0,
+          PaymentDetails: {},
+          OrderStatus: "Waiting for payment",
+        };
+        // Clear cart items in the store
+        store.cartItems = [];
+
+        // Redirect to the payment page with the OrderID
+        this.$router.push({
+          name: "payment",
+          params: { orderID: orderId },
+        });
+      } catch (error) {
+        console.error(
+          "Error submitting order:",
+          error.response ? error.response.data : error.message
+        );
+        this.message =
+          "There was an error submitting your order. Please try again.";
+      }
+    },
   },
 };
 </script>

@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import AboutView from "../views/AboutView.vue";
-import TestView from "../views/TestView.vue";
 import MenuView from "../views/MenuView.vue";
 import CartView from "../views/CartView.vue";
 import PaymentView from "../views/PaymentView.vue";
@@ -26,9 +24,10 @@ const routes = [
     component: CartView,
   },
   {
-    path: "/payment",
+    path: "/payment/:orderID",
     name: "payment",
     component: PaymentView,
+    props: true,
   },
   {
     path: "/order",
