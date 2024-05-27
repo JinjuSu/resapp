@@ -3,7 +3,7 @@
     <div v-if="order.OrderStatus == 'Waiting for payment'">
       <h1>Order No: #{{ order.OrderID }}</h1>
 
-      <h2>Order Satus: {{ order.OrderStatus }}</h2>
+      <h2>Order Status: {{ order.OrderStatus }}</h2>
       <form class="needs-validation" @submit.prevent="submitForm">
         <div>
           <label for="card-name" class="form-label">Card name</label>
