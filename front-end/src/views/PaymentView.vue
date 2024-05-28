@@ -89,7 +89,8 @@
             v-bind:disabled="!formIsFilled"
             :class="['btn', submitButtonColor]"
           >
-            Confirm payment: $AU {{ order.Total }}
+            Confirm payment: $AU
+            {{ order.Total }}
           </button>
         </p>
       </form>
@@ -208,11 +209,13 @@ export default {
       }
     },
     checkcardHolderName() {
-      if (!this.cardHolderName.trim().match(/^[a-zA-Z]+$/)) {
-        this.errorMsg.cardHolderName = "Card name is alphabet only";
+      const nameRegex = /^[a-zA-Z]+(\s[a-zA-Z]+)+$/;
+      if (!nameRegex.test(this.cardHolderName)) {
+        this.errorMsg.cardHolderName = "Card name is required";
       } else {
-        this.errorMsg.cardHolderName = null;
+        this.errorMsg.cardHolderName = "";
       }
+      this.checkSubmit();
     },
     checkCardNumber() {
       const visaRegex = /^4[0-9]{12}(?:[0-9]{3})?$/;
@@ -267,6 +270,7 @@ export default {
 
           console.log("Payment submitted!", response.data);
           this.message = "Payment submitted!";
+          this.order.OrderStatus = "Completed"; // Update the order status to trigger view update
         } catch (error) {
           console.error(
             "Error submitting payment:",

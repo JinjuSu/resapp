@@ -3,7 +3,7 @@
 3. Change the settings on serve.js file - Database name with the one in your phpmyadmin
 
 Connecting and Running:
-1. cd back-end
+1. cd back-end -> cd src
 2. node server.js
 3. cd front-end
 4. npm run serve

@@ -73,7 +73,10 @@
                   </div>
                   <!-- remove icon -->
                   <div class="col">
-                    <i class="fas fa-trash-alt image-icon-trash" />
+                    <i
+                      class="fas fa-trash-alt image-icon-trash"
+                      @click="removeItem(menuItem)"
+                    ></i>
                   </div>
                 </div>
               </div>
@@ -149,7 +152,7 @@ import {
   MDBBtn,
   mdbRipple,
 } from "mdb-vue-ui-kit";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { store } from "../assets/menu-details/store";
 import axios from "axios";
 
@@ -196,7 +199,6 @@ export default {
       }
     },
   },
-
   setup() {
     const cartItems = computed(() => store.cartItems);
 
@@ -215,6 +217,9 @@ export default {
       if (menuItem.Quantity > 1) {
         menuItem.Quantity--;
         updateTotalPrice(menuItem);
+      } else if (menuItem.Quantity === 1) {
+        menuItem.Quantity--;
+        removeItem(menuItem);
       }
     };
 
@@ -222,6 +227,13 @@ export default {
       menuItem.TotalPrice =
         Math.round(menuItem.Price * menuItem.Quantity * 100) / 100;
     };
+
+    const removeItem = (menuItem) => {
+      store.cartItems = store.cartItems.filter(
+        (item) => item.ItemID !== menuItem.ItemID
+      );
+    };
+
     console.log("Retrieved cartItems: ", cartItems);
     console.log("Produced totalCartPrice: ", totalCartPrice);
     return {
@@ -229,26 +241,21 @@ export default {
       totalCartPrice,
       addFunction,
       deductFunction,
+      removeItem,
     };
   },
   methods: {
     checkTableID() {
-      console.log(this.order.TableID);
       if (!this.order.TableID) {
         this.errorMsg = "Table number is required";
+        this.canSubmit = false;
       } else {
-        this.errorMsg = null;
+        this.errorMsg = "";
+        this.canSubmit = true;
       }
     },
     checkSubmit() {
-      this.canSubmit = true;
-
-      for (let key in this.message) {
-        if (this.message[key]) {
-          this.canSubmit = false;
-          break;
-        }
-      }
+      this.checkTableID();
     },
     updateOrderDetails() {
       this.order.Items = store.cartItems;
@@ -256,6 +263,9 @@ export default {
     },
     async submitOrder() {
       this.checkTableID();
+      if (!this.canSubmit) {
+        return;
+      }
       this.order.Timestamp = new Date()
         .toISOString()
         .slice(0, 19)
@@ -304,6 +314,9 @@ export default {
           "There was an error submitting your order. Please try again.";
       }
     },
+  },
+  watch: {
+    "order.TableID": "checkSubmit",
   },
 };
 </script>
