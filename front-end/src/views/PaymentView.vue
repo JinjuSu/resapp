@@ -35,7 +35,6 @@
         <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
           {{ errorMsg.cardNumber }}
         </div>
-        <p>{{ maskedCardNumber }}</p>
 
         <div class="row justify-content-between my-3">
           <div class="col-auto">
