@@ -53,31 +53,29 @@ app.get("/orders/:id", (req, res) => {
 // enpoints fot posting order payment in Payment.vue and order status in OrdersView.vue
 app.put("/orders/:id", (req, res) => {
   const orderId = req.params.id;
-  const { OrderStatus } = req.body;
+  const { PaymentDetails, OrderStatus } = req.body;
+  const query =
+    "UPDATE Orders SET PaymentDetails = ?, OrderStatus = ? WHERE OrderID = ?";
 
-  if (!OrderStatus) {
-    console.error("OrderStatus is missing in the request body.");
-    res.status(400).send("OrderStatus is required");
-    return;
-  }
+  console.log(`Updating order ${orderId} with status ${OrderStatus}`);
 
-  const query = "UPDATE Orders SET OrderStatus = ? WHERE OrderID = ?";
-
-  db.query(query, [OrderStatus, orderId], (err, results) => {
-    if (err) {
-      console.error("Error updating order status:", err);
-      res.status(500).send("Error updating order status");
-      return;
+  db.query(
+    query,
+    [JSON.stringify(PaymentDetails), OrderStatus, orderId],
+    (err, results) => {
+      if (err) {
+        console.error("Error updating order payment details:", err);
+        res.status(500).send("Error updating order payment details");
+        return;
+      }
+      if (results.affectedRows === 0) {
+        res.status(404).send("Order not found");
+        return;
+      }
+      res.send("Order payment details updated successfully");
     }
-    if (results.affectedRows === 0) {
-      console.error(`Order ${orderId} not found`);
-      res.status(404).send("Order not found");
-      return;
-    }
-    res.send("Order status updated successfully");
-  });
+  );
 });
-
 
 app.post("/reservations", (req, res) => {
   const { CustomerName, Date, Time, TableID } = req.body;
