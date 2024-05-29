@@ -224,7 +224,8 @@ export default {
     checkcardHolderName() {
       const nameRegex = /^[a-zA-Z]+(\s[a-zA-Z]+)+$/;
       if (!nameRegex.test(this.cardHolderName)) {
-        this.errorMsg.cardHolderName = "Card name is required";
+        this.errorMsg.cardHolderName =
+          "Card first name last name are required.";
       } else {
         this.errorMsg.cardHolderName = "";
       }
@@ -258,7 +259,7 @@ export default {
     },
     checkSecurityCode() {
       if (/[^\d]/.test(this.securityCode)) {
-        this.errorMsg.securityCode = "Post code must be number only";
+        this.errorMsg.securityCode = "Security code must be number only";
       } else {
         this.errorMsg.securityCode = null;
       }
@@ -277,7 +278,7 @@ export default {
       if (this.canSubmit) {
         try {
           const paymentDetails = {
-            CardType: null,
+            CardType: this.cardType,
             CardNumber: this.maskedCardNumber,
             ExpiryDate: this.expiryDate,
             CardHolderName: this.cardHolderName,
