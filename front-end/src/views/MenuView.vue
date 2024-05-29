@@ -13,7 +13,10 @@
           >
             <div class="card grid-wrap">
               <div class="card-header text-center">
-                <img class="img-fluid" :src="menuItem.Image" />
+                <img
+                  class="img-fluid"
+                  :src="`http://localhost:3000${menuItem.ImagePath}`"
+                />
               </div>
               <div class="card-body">
                 <h5 class="card-title">{{ menuItem.ItemName }}</h5>
@@ -71,8 +74,9 @@ import {
   MDBPageNav,
   MDBPageItem,
 } from "mdb-vue-ui-kit";
-import { ref, computed } from "vue";
-import { menu } from "../assets/menu-details/menu.js";
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
+// import { menu } from "../assets/menu-details/menu.js";
 import { store } from "../assets/menu-details/store";
 
 export default {
@@ -80,11 +84,11 @@ export default {
   data() {
     return {
       searchItem: "",
-      menu,
+      menu: [],
     };
   },
   mounted() {
-    console.log(menu);
+    console.log(this.menu);
   },
   components: {
     MDBContainer,
@@ -97,12 +101,27 @@ export default {
     MDBPageItem,
   },
   setup() {
+    const menu = ref([]);
     const searchItem = ref("");
     const currentPage = ref(1);
     const itemsPerPage = ref(9);
 
+    onMounted(() => {
+      fetchMenu();
+    });
+
+    const fetchMenu = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/menu");
+        menu.value = response.data;
+        console.log(menu.value);
+      } catch (error) {
+        console.error("Error fetching menu data:", error);
+      }
+    };
+
     const filteredProducts = computed(() => {
-      return menu.filter((product) =>
+      return menu.value.filter((product) =>
         product.ItemName.toLowerCase().includes(searchItem.value.toLowerCase())
       );
     });
@@ -135,7 +154,6 @@ export default {
   methods: {
     addToCart(menuItem) {
       store.addToCart(menuItem);
-      //this.cartItems.push(itemId);
       console.log("Cart Items:", store.cartItems);
     },
   },
