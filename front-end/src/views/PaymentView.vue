@@ -1,7 +1,7 @@
 <template>
   <div class="container form-width">
     <div v-if="order.OrderStatus == 'Waiting for payment'">
-      <h1>Order No: #{{ order.OrderID }}</h1>
+      <h1 class="order-no">Order No: #{{ order.OrderID }}</h1>
 
       <h2>Order Status: {{ order.OrderStatus }}</h2>
       <form class="needs-validation" @submit.prevent="submitForm">
@@ -35,6 +35,7 @@
         <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
           {{ errorMsg.cardNumber }}
         </div>
+        <p>{{ maskedCardNumber }}</p>
 
         <div class="row justify-content-between my-3">
           <div class="col-auto">
@@ -47,7 +48,7 @@
           <div class="col-auto">
             <label for="security-code">Security code</label>
             <input
-              type="text"
+              type="password"
               placeholder="123"
               minlength="3"
               maxlength="3"
@@ -192,6 +193,14 @@ export default {
         return "btn-outline-secondary button-shop";
       }
     },
+    maskedCardNumber() {
+      if (this.cardNumber.length > 4) {
+        return (
+          "*".repeat(this.cardNumber.length - 4) + this.cardNumber.slice(-4)
+        );
+      }
+      return this.cardNumber;
+    },
   },
   methods: {
     async fetchOrderDetails() {
@@ -255,7 +264,7 @@ export default {
         try {
           const paymentDetails = {
             CardType: null,
-            CardNumber: this.cardNumber,
+            CardNumber: this.maskedCardNumber,
             ExpiryDate: this.expiryDate,
             CardHolderName: this.cardHolderName,
           };
