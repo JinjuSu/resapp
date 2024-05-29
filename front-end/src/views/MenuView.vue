@@ -122,10 +122,6 @@ export default {
         currentPage.value = page;
       }
     }
-    // const addToCart = (menuItem) => {
-    //   store.addToCart(menuItem);
-    //   console.log("Cart Items:", store.cartItems);
-    // };
 
     return {
       searchItem,
