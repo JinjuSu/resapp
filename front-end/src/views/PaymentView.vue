@@ -1,7 +1,7 @@
 <template>
   <div class="container form-width">
     <div v-if="order.OrderStatus == 'Waiting for payment'">
-      <h1>Order No: #{{ order.OrderID }}</h1>
+      <h1 class="order-no">Order No: #{{ order.OrderID }}</h1>
 
       <h2>Order Status: {{ order.OrderStatus }}</h2>
       <form class="needs-validation" @submit.prevent="submitForm">
@@ -20,20 +20,25 @@
           {{ errorMsg.cardHolderName }}
         </div>
 
-        <div>
-          <label for="card-number" class="form-label">Card number</label>
-          <input
-            type="text"
-            placeholder="4123 4567 8900 5432"
-            maxlength="16"
-            required
-            v-model.trim="cardNumber"
-            class="form-control"
-            @input="checkCardNumber"
-          />
-        </div>
-        <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
-          {{ errorMsg.cardNumber }}
+        <div class="row">
+          <div class="col mt-3">
+            <label for="card-number" class="form-label">Card number</label>
+            <input
+              type="text"
+              placeholder="4123 4567 8900 5432"
+              maxlength="16"
+              required
+              v-model.trim="cardNumber"
+              class="form-control"
+              @input="checkCardNumber"
+            />
+          </div>
+          <div class="col-auto text-end mt-5">
+            <img src="../assets/icons/supported-cards-icon.png" alt="" />
+          </div>
+          <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
+            {{ errorMsg.cardNumber }}
+          </div>
         </div>
 
         <div class="row justify-content-between my-3">
@@ -47,7 +52,7 @@
           <div class="col-auto">
             <label for="security-code">Security code</label>
             <input
-              type="text"
+              type="password"
               placeholder="123"
               minlength="3"
               maxlength="3"
@@ -192,6 +197,14 @@ export default {
         return "btn-outline-secondary button-shop";
       }
     },
+    maskedCardNumber() {
+      if (this.cardNumber.length > 4) {
+        return (
+          "*".repeat(this.cardNumber.length - 4) + this.cardNumber.slice(-4)
+        );
+      }
+      return this.cardNumber;
+    },
   },
   methods: {
     async fetchOrderDetails() {
@@ -211,7 +224,8 @@ export default {
     checkcardHolderName() {
       const nameRegex = /^[a-zA-Z]+(\s[a-zA-Z]+)+$/;
       if (!nameRegex.test(this.cardHolderName)) {
-        this.errorMsg.cardHolderName = "Card name is required";
+        this.errorMsg.cardHolderName =
+          "Card first name last name are required.";
       } else {
         this.errorMsg.cardHolderName = "";
       }
@@ -220,22 +234,32 @@ export default {
     checkCardNumber() {
       const visaRegex = /^4[0-9]{12}(?:[0-9]{3})?$/;
       const masterCardRegex = /^5[1-5][0-9]{14}$/;
+      const amexRegex = /^3[47][0-9]{13}$/;
+      const jcbRegex = /^(?:2131|1800|35\d{3})\d{11}$/;
 
       if (this.cardNumber.trim() === "") {
         this.errorMsg.cardNumber = "Card number is required";
-      } else if (
-        !visaRegex.test(this.cardNumber) &&
-        !masterCardRegex.test(this.cardNumber)
-      ) {
-        this.errorMsg.cardNumber =
-          "Invalid card number. Must be a Visa or MasterCard.";
-      } else {
+        this.cardType = "";
+      } else if (visaRegex.test(this.cardNumber)) {
         this.errorMsg.cardNumber = "";
+        this.cardType = "Visa";
+      } else if (masterCardRegex.test(this.cardNumber)) {
+        this.errorMsg.cardNumber = "";
+        this.cardType = "MasterCard";
+      } else if (amexRegex.test(this.cardNumber)) {
+        this.errorMsg.cardNumber = "";
+        this.cardType = "Amex";
+      } else if (jcbRegex.test(this.cardNumber)) {
+        this.errorMsg.cardNumber = "";
+        this.cardType = "JCB";
+      } else {
+        this.errorMsg.cardNumber = "Invalid card number.";
+        this.cardType = "";
       }
     },
     checkSecurityCode() {
       if (/[^\d]/.test(this.securityCode)) {
-        this.errorMsg.securityCode = "Post code must be number only";
+        this.errorMsg.securityCode = "Security code must be number only";
       } else {
         this.errorMsg.securityCode = null;
       }
@@ -254,8 +278,8 @@ export default {
       if (this.canSubmit) {
         try {
           const paymentDetails = {
-            CardType: null,
-            CardNumber: this.cardNumber,
+            CardType: this.cardType,
+            CardNumber: this.maskedCardNumber,
             ExpiryDate: this.expiryDate,
             CardHolderName: this.cardHolderName,
           };

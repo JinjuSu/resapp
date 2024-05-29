@@ -1,6 +1,7 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
+  <div class="text-center my-5">
+    <h1>This is Home page.</h1>
+    <p>Click to Nav items to test all the functionalities</p>
   </div>
 </template>
 
