@@ -125,7 +125,7 @@ export default {
         return {
             orderList: [],
             displayPopup: false,
-            updatingOrder: new Order('', '', '', '', ''),
+            updatingOrder: new Order('', '', '', '', '',''),
             menu: [],
             observers: []
         };
