@@ -20,20 +20,25 @@
           {{ errorMsg.cardHolderName }}
         </div>
 
-        <div>
-          <label for="card-number" class="form-label">Card number</label>
-          <input
-            type="text"
-            placeholder="4123 4567 8900 5432"
-            maxlength="16"
-            required
-            v-model.trim="cardNumber"
-            class="form-control"
-            @input="checkCardNumber"
-          />
-        </div>
-        <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
-          {{ errorMsg.cardNumber }}
+        <div class="row">
+          <div class="col mt-3">
+            <label for="card-number" class="form-label">Card number</label>
+            <input
+              type="text"
+              placeholder="4123 4567 8900 5432"
+              maxlength="16"
+              required
+              v-model.trim="cardNumber"
+              class="form-control"
+              @input="checkCardNumber"
+            />
+          </div>
+          <div class="col-auto text-end mt-5">
+            <img src="../assets/icons/supported-cards-icon.png" alt="" />
+          </div>
+          <div v-if="errorMsg.cardNumber" v-bind:style="{ color: 'red' }">
+            {{ errorMsg.cardNumber }}
+          </div>
         </div>
 
         <div class="row justify-content-between my-3">
@@ -228,17 +233,27 @@ export default {
     checkCardNumber() {
       const visaRegex = /^4[0-9]{12}(?:[0-9]{3})?$/;
       const masterCardRegex = /^5[1-5][0-9]{14}$/;
+      const amexRegex = /^3[47][0-9]{13}$/;
+      const jcbRegex = /^(?:2131|1800|35\d{3})\d{11}$/;
 
       if (this.cardNumber.trim() === "") {
         this.errorMsg.cardNumber = "Card number is required";
-      } else if (
-        !visaRegex.test(this.cardNumber) &&
-        !masterCardRegex.test(this.cardNumber)
-      ) {
-        this.errorMsg.cardNumber =
-          "Invalid card number. Must be a Visa or MasterCard.";
-      } else {
+        this.cardType = "";
+      } else if (visaRegex.test(this.cardNumber)) {
         this.errorMsg.cardNumber = "";
+        this.cardType = "Visa";
+      } else if (masterCardRegex.test(this.cardNumber)) {
+        this.errorMsg.cardNumber = "";
+        this.cardType = "MasterCard";
+      } else if (amexRegex.test(this.cardNumber)) {
+        this.errorMsg.cardNumber = "";
+        this.cardType = "Amex";
+      } else if (jcbRegex.test(this.cardNumber)) {
+        this.errorMsg.cardNumber = "";
+        this.cardType = "JCB";
+      } else {
+        this.errorMsg.cardNumber = "Invalid card number.";
+        this.cardType = "";
       }
     },
     checkSecurityCode() {
