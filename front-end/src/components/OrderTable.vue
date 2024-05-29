@@ -82,12 +82,13 @@
 import axios from 'axios';
 
 class Order {
-    constructor(orderID, timestamp, tableID, items, orderStatus) {
+    constructor(orderID, timestamp, tableID, items, orderStatus, paymentDetails){
         this.orderID = orderID;
         this.timestamp = timestamp;
         this.tableID = tableID;
         this.items = items;
         this.orderStatus = orderStatus;
+        this.PaymentDetails = paymentDetails;
     }
 
     formatTimestamp() {
@@ -124,7 +125,7 @@ export default {
         return {
             orderList: [],
             displayPopup: false,
-            updatingOrder: new Order('', '', '', '', ''),
+            updatingOrder: new Order('', '', '', '', '',''),
             menu: [],
             observers: []
         };
@@ -148,7 +149,8 @@ export default {
         },
         saveOrderStatus() {
             axios.put(`http://localhost:3000/orders/${this.updatingOrder.orderID}`, {
-                OrderStatus: this.updatingOrder.orderStatus // Ensure correct field name
+                OrderStatus: this.updatingOrder.orderStatus, // Ensure correct field name
+                PaymentDetails: this.updatingOrder.PaymentDetails
             })
             .then(response => {
                 this.closeUpdatePopup();
@@ -162,7 +164,7 @@ export default {
             axios.get('http://localhost:3000/orders')
             .then(response => {
                 this.orderList = response.data.map(orderData => 
-                    new Order(orderData.OrderID, orderData.Timestamp, orderData.TableID, orderData.Items, orderData.OrderStatus)
+                new Order(orderData.OrderID, orderData.Timestamp, orderData.TableID, orderData.Items, orderData.OrderStatus, orderData.PaymentDetails)
                 );
                 this.notifyObservers();
             })
