@@ -82,7 +82,7 @@
 import axios from 'axios';
 
 class Order {
-    constructor(orderID, timestamp, tableID, items, orderStatus, paymentDetails) {
+    constructor(orderID, timestamp, tableID, items, orderStatus, paymentDetails){
         this.orderID = orderID;
         this.timestamp = timestamp;
         this.tableID = tableID;
@@ -125,7 +125,7 @@ export default {
         return {
             orderList: [],
             displayPopup: false,
-            updatingOrder: new Order('', '', '', '', ''),
+            updatingOrder: new Order('', '', '', '', '',''),
             menu: [],
             observers: []
         };
@@ -164,7 +164,7 @@ export default {
             axios.get('http://localhost:3000/orders')
             .then(response => {
                 this.orderList = response.data.map(orderData => 
-                    new Order(orderData.OrderID, orderData.Timestamp, orderData.TableID, orderData.Items, orderData.OrderStatus, orderData.PaymentDetails)
+                new Order(orderData.OrderID, orderData.Timestamp, orderData.TableID, orderData.Items, orderData.OrderStatus, orderData.PaymentDetails)
                 );
                 this.notifyObservers();
             })
