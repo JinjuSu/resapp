@@ -10,7 +10,7 @@
             type="text"
             minlength="1"
             maxlength="2"
-            placeholder="00"
+            placeholder="01-33"
             required
             v-model="order.TableID"
             @input="checkSubmit"
@@ -28,7 +28,10 @@
             <div
               class="card border-0 shadow-none text-end image-product bg-transparent d-flex justify-content-end"
             >
-              <img :src="menuItem.Image" class="img-fluid rounded-start" />
+              <img
+                :src="`http://localhost:3000${menuItem.ImagePath}`"
+                class="img-fluid rounded-start"
+              />
             </div>
           </div>
 
@@ -246,8 +249,12 @@ export default {
   },
   methods: {
     checkTableID() {
+      const tableID = parseInt(this.order.TableID);
       if (!this.order.TableID) {
         this.errorMsg = "Table number is required";
+        this.canSubmit = false;
+      } else if (isNaN(tableID) || tableID < 1 || tableID > 33) {
+        this.errorMsg = "Table numbers are 01 - 33";
         this.canSubmit = false;
       } else {
         this.errorMsg = "";

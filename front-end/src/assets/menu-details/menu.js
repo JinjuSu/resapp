@@ -1,5 +1,7 @@
 import MenuImage from "../food-photo.jpeg";
 
+// database path -> "/images/food-photo.jpeg");
+
 export const cartItems = [
   {
     ItemID: 16,
